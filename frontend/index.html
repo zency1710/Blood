@@ -14,7 +14,7 @@
         <div class="nav-container">
             <div class="nav-logo">
                 <i class="fas fa-heart"></i>
-                <span>BloodBank</span>
+                <span>LifeGrid</span>
             </div>
             <ul class="nav-menu" id="nav-menu">
                 <li><a href="#" onclick="showPage('home')" class="nav-link active">Home</a></li>
@@ -22,8 +22,33 @@
                 <li><a href="#" onclick="showPage('donor-registration')" class="nav-link">Become Donor</a></li>
                 <li><a href="#" onclick="showPage('request-blood')" class="nav-link">Request Blood</a></li>
                 <li><a href="#" onclick="showPage('contact')" class="nav-link">Contact</a></li>
-                <li><a href="#" onclick="showPage('admin-login')" class="nav-link admin-btn">Admin Login</a></li>
             </ul>
+            <div class="nav-actions">
+                <div id="notification-nav-item" style="display: none;">
+                    <a href="#" onclick="toggleNotificationDropdown(event)" class="nav-link notification-icon">
+                        <i class="fas fa-bell"></i>
+                        <span id="notification-badge-nav" class="notification-badge" style="display: none;">0</span>
+                    </a>
+                    <!-- Notification Dropdown -->
+                    <div id="notification-dropdown" class="notification-dropdown" style="display: none;">
+                        <div class="notification-dropdown-header">
+                            <h3>Notifications</h3>
+                            <button class="btn-text" onclick="markAllNotificationsRead()">Mark all as read</button>
+                        </div>
+                        <div id="notification-dropdown-list" class="notification-dropdown-list">
+                            <!-- Notifications will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                <div id="profile-nav-item" style="display: none;">
+                    <a href="#" onclick="showPage('user-dashboard')" class="nav-link profile-icon" title="My Dashboard">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                </div>
+                <div id="login-nav-item">
+                    <a href="#" onclick="showPage('login')" class="nav-link admin-btn">Login</a>
+                </div>
+            </div>
             <div class="hamburger" id="hamburger">
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -143,7 +168,7 @@
         <!-- About Page -->
         <section id="about" class="page">
             <div class="page-header">
-                <h1><span class="gradient-text">About</span> BloodBank</h1>
+                <h1><span class="gradient-text">About</span> LifeGrid</h1>
                 <p>Dedicated to connecting blood donors with those in need, creating a community where every donation saves lives.</p>
             </div>
 
@@ -444,59 +469,331 @@
             </div>
         </section>
 
-        <!-- Admin Login Page -->
-        <section id="admin-login" class="page">
-            <div class="admin-login-container">
+        <!-- Unified Login Page -->
+        <section id="login" class="page">
+            <div class="user-login-container">
                 <div class="login-card">
                     <div class="login-header">
                         <div class="login-icon">
-                            <i class="fas fa-shield-alt"></i>
+                            <i class="fas fa-sign-in-alt"></i>
                         </div>
-                        <h1>Admin Login</h1>
-                        <p>Access the admin dashboard to manage donors and requests</p>
+                        <h1>Welcome Back</h1>
+                        <p>Sign in to access your account</p>
                     </div>
-                    <form id="admin-login-form" class="login-form">
+                    
+                    <!-- Login Type Tabs -->
+                    <div class="login-tabs">
+                        <button class="login-tab active" onclick="switchLoginTab('user')">
+                            <i class="fas fa-user"></i> User Login
+                        </button>
+                        <button class="login-tab" onclick="switchLoginTab('admin')">
+                            <i class="fas fa-shield-alt"></i> Admin Login
+                        </button>
+                    </div>
+                    
+                    <!-- User Login Form -->
+                    <form id="user-login-form" class="login-form active-form">
                         <div class="form-group">
-                            <label for="admin-username">
-                                <i class="fas fa-user"></i> Username
+                            <label for="user-username">
+                                <i class="fas fa-user"></i> Username or Email
                             </label>
-                            <input type="text" id="admin-username" name="username" required placeholder="Enter your username">
+                            <input type="text" id="user-username" name="username" required placeholder="Enter your username or email">
                         </div>
                         <div class="form-group">
-                            <label for="admin-password">
+                            <label for="user-password">
                                 <i class="fas fa-lock"></i> Password
                             </label>
                             <div class="password-input">
-                                <input type="password" id="admin-password" name="password" required placeholder="Enter your password">
+                                <input type="password" id="user-password" name="password" required placeholder="Enter your password">
+                                <button type="button" class="password-toggle" onclick="togglePassword('user-password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-options">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="remember-me" name="rememberMe">
+                                <span class="checkmark"></span>
+                                Remember me
+                            </label>
+                            <a href="#" class="forgot-password">Forgot Password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <i class="fas fa-sign-in-alt"></i> Sign In as User
+                        </button>
+                        <div class="login-footer">
+                            <p>Don't have an account? <a href="#" onclick="showPage('user-register')">Sign up here</a></p>
+                        </div>
+                    </form>
+                    
+                    <!-- Admin Login Form -->
+                    <form id="admin-login-form" class="login-form">
+                        <div class="form-group">
+                            <label for="admin-username">
+                                <i class="fas fa-user-shield"></i> Admin Username
+                            </label>
+                            <input type="text" id="admin-username" name="username" required placeholder="Enter admin username">
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-password">
+                                <i class="fas fa-lock"></i> Admin Password
+                            </label>
+                            <div class="password-input">
+                                <input type="password" id="admin-password" name="password" required placeholder="Enter admin password">
                                 <button type="button" class="password-toggle" onclick="togglePassword('admin-password')">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary btn-full">
-                            <i class="fas fa-shield-alt"></i> Sign In
+                            <i class="fas fa-shield-alt"></i> Sign In as Admin
                         </button>
+                        <div class="demo-credentials">
+                            <p class="demo-note"><i class="fas fa-info-circle"></i> Demo: admin / admin123</p>
+                        </div>
                     </form>
-                    <div class="demo-credentials">
-                        <h3>Demo Credentials</h3>
-                        <p><strong>Username:</strong> admin</p>
-                        <p><strong>Password:</strong> admin123</p>
-                        <p class="demo-note">Use these credentials for testing purposes</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Registration Page -->
+        <section id="user-register" class="page">
+            <div class="page-header">
+                <h1><span class="gradient-text">Create Account</span></h1>
+                <p>Join our community and start making a difference today.</p>
+            </div>
+
+            <div class="registration-content">
+                <div class="form-container">
+                    <div class="form-card">
+                        <div class="form-header">
+                            <i class="fas fa-user-plus"></i>
+                            <h2>User Registration</h2>
+                        </div>
+                        <form id="user-register-form" class="user-register-form">
+                            <div class="form-group">
+                                <label for="register-name">
+                                    <i class="fas fa-user"></i> Full Name *
+                                </label>
+                                <input type="text" id="register-name" name="name" required placeholder="Enter your full name">
+                            </div>
+                            <div class="form-group">
+                                <label for="register-username">
+                                    <i class="fas fa-at"></i> Username *
+                                </label>
+                                <input type="text" id="register-username" name="username" required placeholder="Choose a username">
+                            </div>
+                            <div class="form-group">
+                                <label for="register-email">
+                                    <i class="fas fa-envelope"></i> Email Address *
+                                </label>
+                                <input type="email" id="register-email" name="email" required placeholder="Enter your email">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="register-password">
+                                        <i class="fas fa-lock"></i> Password *
+                                    </label>
+                                    <div class="password-input">
+                                        <input type="password" id="register-password" name="password" required placeholder="Create a password">
+                                        <button type="button" class="password-toggle" onclick="togglePassword('register-password')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="register-confirm-password">
+                                        <i class="fas fa-lock"></i> Confirm Password *
+                                    </label>
+                                    <div class="password-input">
+                                        <input type="password" id="register-confirm-password" name="confirmPassword" required placeholder="Confirm password">
+                                        <button type="button" class="password-toggle" onclick="togglePassword('register-confirm-password')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-contact">
+                                    <i class="fas fa-phone"></i> Contact Number *
+                                </label>
+                                <input type="tel" id="register-contact" name="contact" required placeholder="Enter your contact number">
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="agree-terms" name="agreeTerms" required>
+                                    <span class="checkmark"></span>
+                                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="info-panels">
+                    <div class="info-card benefits">
+                        <h3>Why Create an Account?</h3>
+                        <ul>
+                            <li>Track your donation history</li>
+                            <li>Manage blood requests easily</li>
+                            <li>Get notifications about urgent needs</li>
+                            <li>Access exclusive donor rewards</li>
+                        </ul>
+                    </div>
+                    <div class="info-card security">
+                        <h3>Your Data is Safe</h3>
+                        <ul>
+                            <li>Encrypted data storage</li>
+                            <li>No sharing with third parties</li>
+                            <li>Secure login system</li>
+                            <li>Privacy-first approach</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Admin Dashboard Page -->
+        <!-- User Dashboard Page -->
+        <section id="user-dashboard" class="page">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h1>My Dashboard</h1>
+                    <p>Welcome back, <span id="user-name">User</span></p>
+                </div>
+                <button class="btn btn-outline" onclick="userLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <!-- User Stats -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>My Donations</h3>
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-number" id="user-total-donations">0</div>
+                    <p>Total donations made</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>My Requests</h3>
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="stat-number" id="user-total-requests">0</div>
+                    <p>Blood requests submitted</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Lives Saved</h3>
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-number" id="user-lives-saved">0</div>
+                    <p>Estimated lives saved</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Last Donation</h3>
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="stat-date" id="user-last-donation">Never</div>
+                    <p>Days since last donation</p>
+                </div>
+            </div>
+
+            <!-- User Tabs -->
+            <div class="dashboard-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showUserTab('profile')">
+                        <i class="fas fa-user"></i> My Profile
+                    </button>
+                    <button class="tab-btn" onclick="showUserTab('donations')">
+                        <i class="fas fa-heart"></i> My Donations
+                    </button>
+                    <button class="tab-btn" onclick="showUserTab('requests')">
+                        <i class="fas fa-file-alt"></i> My Requests
+                    </button>
+                </div>
+
+                <!-- Profile Tab -->
+                <div id="user-profile-tab" class="tab-content active">
+                    <div class="tab-header">
+                        <h2><i class="fas fa-user"></i> Profile Information</h2>
+                    </div>
+                    <div class="profile-content">
+                        <div class="profile-card">
+                            <div class="profile-info">
+                                <div class="profile-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="profile-details">
+                                    <h3 id="profile-name">User Name</h3>
+                                    <p id="profile-email">user@example.com</p>
+                                    <p id="profile-contact">+1 234 567 8900</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline" onclick="editProfile()">
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Donations Tab -->
+                <div id="user-donations-tab" class="tab-content">
+                    <div class="tab-header">
+                        <h2><i class="fas fa-heart"></i> My Donation History</h2>
+                    </div>
+                    <div id="user-donations-list" class="donations-list">
+                        <!-- Donations will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Requests Tab -->
+                <div id="user-requests-tab" class="tab-content">
+                    <div class="tab-header">
+                        <h2><i class="fas fa-file-alt"></i> My Blood Requests</h2>
+                    </div>
+                    <div id="user-requests-list" class="requests-list">
+                        <!-- Requests will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Notifications Tab -->
+                <div id="user-notifications-tab" class="tab-content">
+                    <div class="tab-header">
+                        <h2><i class="fas fa-bell"></i> Notifications</h2>
+                        <button class="btn btn-outline btn-sm" onclick="markAllNotificationsRead()">
+                            <i class="fas fa-check-double"></i> Mark All as Read
+                        </button>
+                    </div>
+                    <div id="user-notifications-list" class="notifications-list">
+                        <!-- Notifications will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
         <section id="admin-dashboard" class="page">
             <div class="dashboard-header">
                 <div class="dashboard-title">
                     <h1>Admin Dashboard</h1>
                     <p>Welcome back, <span id="admin-name">Admin</span></p>
                 </div>
-                <button class="btn btn-outline" onclick="adminLogout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+                <div class="dashboard-actions">
+                    <div class="report-options">
+                        <button class="btn btn-primary" onclick="generateDonorReport('pdf')">
+                            <i class="fas fa-file-pdf"></i> PDF Report
+                        </button>
+                        <button class="btn btn-success" onclick="generateDonorReport('excel')">
+                            <i class="fas fa-file-excel"></i> Excel Report
+                        </button>
+                    </div>
+                    <button class="btn btn-outline" onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
             </div>
 
             <!-- Dashboard Stats -->
@@ -591,7 +888,7 @@
                             <i class="fas fa-envelope"></i>
                         </div>
                         <h3>Email</h3>
-                        <p>help@bloodbank.com</p>
+                        <p>help@lifegrid.com</p>
                         <p>emergency@bloodbank.com</p>
                         <span class="contact-desc">We respond within 2 hours</span>
                     </div>
@@ -639,7 +936,7 @@
             <div class="footer-section">
                 <div class="footer-logo">
                     <i class="fas fa-heart"></i>
-                    <span>BloodBank</span>
+                    <span>LifeGrid</span>
                 </div>
                 <p>Connecting blood donors with those in need. Every donation saves lives and brings hope to families. Join our mission to make blood available to everyone, everywhere.</p>
                 <div class="footer-tagline">
@@ -660,13 +957,13 @@
                 <h3>Contact Info</h3>
                 <ul>
                     <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
-                    <li><i class="fas fa-envelope"></i> help@bloodbank.com</li>
+                    <li><i class="fas fa-envelope"></i> help@lifegrid.com</li>
                     <li><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, City</li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 BloodBank. All rights reserved.</p>
+            <p>&copy; 2024 LifeGrid. All rights reserved.</p>
             <div class="footer-links">
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Service</a>
